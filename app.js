@@ -732,7 +732,7 @@
     }
   }
 
-  // 页面加载自动检测 URL 查询参数 (?id=8EKQ666J&proxy=...)
+  // 页面加载自动检测 URL 查询参数 (?id=<id>&proxy=...)
   function checkUrlQueryParams() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');

@@ -22,13 +22,20 @@ export default {
     // 获取目标 URL: 通过 ?url= 参数或者直接转发
     const targetUrl = url.searchParams.get("url");
     if (!targetUrl) {
+      // 若在浏览器中直接打开 Worker 地址，自动跳转到 GitHub Pages 前端播放器
+      const acceptHeader = request.headers.get("Accept") || "";
+      if (acceptHeader.includes("text/html")) {
+        return Response.redirect("https://xrjprogram.github.io/scaccelerator/", 302);
+      }
+
       return new Response(
         JSON.stringify({
-          error: "Missing target url parameter (?url=https://...)",
-          usage: "https://your-worker.workers.dev/?url=https://community-api.xiaomawang.com/japi/v1/composition/get-encrypt-sb3?compositionEncryptId=8EKQ666J",
+          status: "online",
+          service: "Scaccelerator CORS Proxy",
+          message: "Pass ?url=<target_url> to proxy requests.",
         }),
         {
-          status: 400,
+          status: 200,
           headers: {
             "Content-Type": "application/json; charset=utf-8",
             "Access-Control-Allow-Origin": "*",

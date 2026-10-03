@@ -25,14 +25,14 @@
 访问 GitHub Pages 站点：
 `https://xrjprogram.github.io/scaccelerator/`
 
-1. 复制小码王社区任意作品地址（例如 `https://world.xiaomawang.com/community/main/compose/8EKQ666J`）或作品 ID。
+1. 复制小码王社区任意作品地址（例如 `https://world.xiaomawang.com/community/main/compose/<作品ID>`）或作品 ID。
 2. 粘贴至右侧输入框，点击 **“加载运行”**。
 3. 亦可直接拖拽本地电脑中的 `.sb3` 文件至舞台区域加载。
 
 ### 2. URL 参数直接加载
 通过 URL 参数可直接指定作品 ID：
 ```text
-https://xrjprogram.github.io/scaccelerator/?id=8EKQ666J
+https://xrjprogram.github.io/scaccelerator/?id=<作品ID>
 ```
 
 ---
