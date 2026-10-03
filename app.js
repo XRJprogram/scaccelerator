@@ -327,7 +327,7 @@
     dom.btnExportSb3.disabled = false;
 
     hideOverlay();
-    showToast('🚀 加速加载成功！TurboWarp 60 帧运行中');
+    showToast('项目已成功加载并启动');
 
     // 8. 启动绿旗
     scaffolding.start();
@@ -413,7 +413,7 @@
     } catch (err) {
       console.error(err);
       hideOverlay();
-      showToast(`❌ 加载失败: ${err.message}`, 5000);
+      showToast(`加载失败: ${err.message}`, 5000);
       alert(`加载失败: ${err.message}\n\n提示：如遇 CORS 限制，请点击右上角设置图标更换为自定义 Cloudflare Worker 代理，或使用油猴脚本。`);
     } finally {
       dom.btnLoadUrl.disabled = false;
@@ -426,7 +426,7 @@
     dom.btnLoadUrl.addEventListener('click', () => {
       const parsed = parseInput(dom.inputUrl.value);
       if (!parsed) {
-        showToast('⚠️ 请输入有效的小码王作品网址或 ID');
+        showToast('请输入有效的小码王作品网址或 ID');
         dom.inputUrl.focus();
         return;
       }
@@ -492,7 +492,7 @@
       if (state.scaffolding) {
         state.scaffolding.greenFlag();
         state.isPaused = false;
-        showToast('🚩 绿旗已启动');
+        showToast('已启动');
       }
     });
 
@@ -500,7 +500,7 @@
       if (state.scaffolding) {
         state.scaffolding.stopAll();
         state.isPaused = false;
-        showToast('🛑 全部已停止');
+        showToast('已停止全部');
       }
     });
 
@@ -513,7 +513,7 @@
         if (state.isPaused) state.scaffolding.vm.stop();
         else state.scaffolding.vm.start();
       }
-      showToast(state.isPaused ? '⏸️ 已暂停' : '▶️ 继续运行');
+      showToast(state.isPaused ? '已暂停' : '继续运行');
     });
 
     dom.btnFullscreen.addEventListener('click', () => {
@@ -531,7 +531,7 @@
       state.settings.fps = parseInt(dom.selectFps.value, 10);
       saveLocalSettings();
       applyTurboWarpOptions();
-      showToast(`⚡ 帧率已调整为: ${dom.selectFps.options[dom.selectFps.selectedIndex].text}`);
+      showToast(`目标帧率已设置为: ${dom.selectFps.options[dom.selectFps.selectedIndex].text}`);
     });
 
     dom.toggleInterpolation.addEventListener('change', () => {
@@ -556,21 +556,21 @@
       state.settings.turbo = dom.toggleTurbo.checked;
       saveLocalSettings();
       applyTurboWarpOptions();
-      showToast(state.settings.turbo ? '🚀 Turbo 极速模式已开启' : 'Turbo 模式已关闭');
+      showToast(state.settings.turbo ? 'Turbo 极速模式已开启' : 'Turbo 模式已关闭');
     });
 
     // 6. 导出已解密 .sb3
     dom.btnExportSb3.addEventListener('click', async () => {
       if (!state.scaffolding || !state.scaffolding.vm) return;
       try {
-        showToast('📦 正在导出项目 .sb3 ...');
+        showToast('正在导出项目 .sb3...');
         const blob = await state.scaffolding.vm.saveProjectSb3();
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
         const fileName = `${dom.metaTitle.textContent || 'project'}.sb3`;
         a.download = fileName;
         a.click();
-        showToast('✅ 导出已开始下载');
+        showToast('导出完成，已开始下载');
       } catch (err) {
         showToast(`导出失败: ${err.message}`);
       }
@@ -599,7 +599,7 @@
       state.settings.customProxyUrl = dom.inputCustomProxy.value.trim();
       saveLocalSettings();
       closeModal();
-      showToast('✅ 代理配置已保存');
+      showToast('代理配置已保存');
     });
   }
 

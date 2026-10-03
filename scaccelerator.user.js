@@ -37,39 +37,31 @@
 
     const btn = document.createElement('button');
     btn.id = 'scaccelerator-btn';
-    btn.innerHTML = `
-      <svg style="width:16px;height:16px;vertical-align:-2px;margin-right:6px;fill:currentColor;" viewBox="0 0 24 24">
-        <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
-      </svg>
-      TurboWarp 加速运行 (60帧)
-    `;
+    btn.innerHTML = `TurboWarp 播放器 (60FPS)`;
 
     Object.assign(btn.style, {
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(135deg, #ff4b4b 0%, #ff8533 100%)',
+      backgroundColor: '#2563eb',
       color: '#ffffff',
-      fontWeight: 'bold',
-      fontSize: '14px',
-      padding: '8px 16px',
-      borderRadius: '20px',
-      border: 'none',
-      boxShadow: '0 4px 12px rgba(255, 75, 75, 0.4)',
+      fontWeight: '500',
+      fontSize: '13px',
+      padding: '6px 14px',
+      borderRadius: '6px',
+      border: '1px solid #1d4ed8',
       cursor: 'pointer',
-      margin: '8px 12px',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+      margin: '6px 10px',
+      transition: 'background-color 0.15s ease',
       zIndex: '9999',
     });
 
     btn.addEventListener('mouseenter', () => {
-      btn.style.transform = 'translateY(-2px) scale(1.03)';
-      btn.style.boxShadow = '0 6px 16px rgba(255, 75, 75, 0.6)';
+      btn.style.backgroundColor = '#1d4ed8';
     });
 
     btn.addEventListener('mouseleave', () => {
-      btn.style.transform = 'translateY(0) scale(1)';
-      btn.style.boxShadow = '0 4px 12px rgba(255, 75, 75, 0.4)';
+      btn.style.backgroundColor = '#2563eb';
     });
 
     btn.addEventListener('click', (e) => {
