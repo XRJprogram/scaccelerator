@@ -162,8 +162,25 @@ body {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7);
   max-width: 100%;
   max-height: 100%;
-  /* 默认 4:3 比例，由 JS 动态调整 */
-  aspect-ratio: 4 / 3;
+  position: relative;
+}
+
+/* 全屏播放状态 */
+.stage-wrapper:fullscreen,
+.stage-wrapper:-webkit-full-screen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+}
+
+.stage-wrapper:fullscreen .stage-container,
+.stage-wrapper:-webkit-full-screen .stage-container {
+  width: 100% !important;
+  height: calc(100vh - 36px) !important;
 }
 
 /* 播放器顶部工具栏 */
@@ -264,6 +281,8 @@ body {
   color: var(--text-muted);
   text-align: center;
   padding: 20px;
+  width: 100%;
+  height: 100%;
 }
 
 .placeholder-icon {
@@ -291,7 +310,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  z-index: 20;
+  z-index: 50;
   transition: opacity 0.2s ease;
 }
 

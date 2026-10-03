@@ -47,7 +47,7 @@
     <section class="stage-section">
       <div class="stage-wrapper" id="stage-wrapper">
         <!-- 播放器工具条 -->
-        <div class="stage-toolbar">
+        <div class="stage-toolbar" id="stage-toolbar">
           <div class="toolbar-left">
             <button class="control-btn btn-green-flag" id="btn-green-flag" title="启动 (Green Flag)">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -89,13 +89,13 @@
             <div class="placeholder-text">在右侧输入小码王作品网址或拖入 .sb3 文件</div>
             <div class="placeholder-subtext">基于 TurboWarp 引擎 · 支持 60 帧平滑渲染与编译加速</div>
           </div>
+        </div>
 
-          <!-- 加载遮罩 -->
-          <div class="stage-overlay hidden" id="stage-overlay">
-            <div class="spinner"></div>
-            <div class="overlay-status" id="overlay-status">正在解析作品...</div>
-            <div class="overlay-substatus" id="overlay-substatus">连接小码王社区</div>
-          </div>
+        <!-- 加载遮罩 (覆盖整个 stage-wrapper 区域) -->
+        <div class="stage-overlay hidden" id="stage-overlay">
+          <div class="spinner"></div>
+          <div class="overlay-status" id="overlay-status">正在解析作品...</div>
+          <div class="overlay-substatus" id="overlay-substatus">连接小码王社区</div>
         </div>
       </div>
     </section>

@@ -49,7 +49,9 @@
     toggleHqpen: document.getElementById('toggle-hqpen'),
     toggleRemoveLimits: document.getElementById('toggle-removelimits'),
     toggleTurbo: document.getElementById('toggle-turbo'),
+    stageSection: document.querySelector('.stage-section'),
     stageWrapper: document.getElementById('stage-wrapper'),
+    stageToolbar: document.getElementById('stage-toolbar') || document.querySelector('.stage-toolbar'),
     stageContainer: document.getElementById('stage-container'),
     stagePlaceholder: document.getElementById('stage-placeholder'),
     stageOverlay: document.getElementById('stage-overlay'),
@@ -166,6 +168,56 @@
     }
   }
 
+  // 动态自适应计算：按舞台比例以最大尺寸填充左侧舞台区域
+  function resizeStageBox() {
+    if (!dom.stageSection || !dom.stageWrapper || !dom.stageContainer) return;
+
+    if (document.fullscreenElement) {
+      dom.stageWrapper.style.width = '100vw';
+      dom.stageWrapper.style.height = '100vh';
+      dom.stageContainer.style.width = '100vw';
+      dom.stageContainer.style.height = 'calc(100vh - 36px)';
+      if (state.scaffolding && typeof state.scaffolding.relayout === 'function') {
+        state.scaffolding.relayout();
+      }
+      return;
+    }
+
+    const sectionRect = dom.stageSection.getBoundingClientRect();
+    // 留出边距 (8px padding * 2 = 16px)
+    const availW = Math.max(120, Math.floor(sectionRect.width - 16));
+    const availH = Math.max(120, Math.floor(sectionRect.height - 16));
+    const toolbarH = dom.stageToolbar ? dom.stageToolbar.offsetHeight : 36;
+
+    const ratio = (state.stageWidth > 0 && state.stageHeight > 0)
+      ? (state.stageWidth / state.stageHeight)
+      : (4 / 3);
+
+    // 最大可用于显示 stage 的高度
+    const maxStageH = Math.max(50, availH - toolbarH);
+
+    // 先以宽度为基准计算高度
+    let targetW = availW;
+    let targetH = Math.round(targetW / ratio);
+
+    // 在单屏桌面视口下 (宽度 > 860px)，受 section 高度约束，确保舞台完全嵌在可视区域内无需滚动
+    const isDesktop = window.innerWidth > 860;
+    if (isDesktop && targetH > maxStageH) {
+      targetH = maxStageH;
+      targetW = Math.round(targetH * ratio);
+    }
+
+    dom.stageWrapper.style.width = `${targetW}px`;
+    dom.stageWrapper.style.height = `${targetH + toolbarH}px`;
+    dom.stageContainer.style.width = `${targetW}px`;
+    dom.stageContainer.style.height = `${targetH}px`;
+
+    // 通知 Scaffolding 运行时重新排版并调整 WebGL 画布像素
+    if (state.scaffolding && typeof state.scaffolding.relayout === 'function') {
+      state.scaffolding.relayout();
+    }
+  }
+
   // 舞台分辨率更新
   function setStageDimensions(width, height) {
     state.stageWidth = parseInt(width, 10) || 480;
@@ -177,17 +229,17 @@
     if (state.scaffolding) {
       state.scaffolding.width = state.stageWidth;
       state.scaffolding.height = state.stageHeight;
-      if (typeof state.scaffolding.relayout === 'function') {
-        state.scaffolding.relayout();
+      if (state.scaffolding.vm && typeof state.scaffolding.vm.setStageSize === 'function') {
+        state.scaffolding.vm.setStageSize(state.stageWidth, state.stageHeight);
       }
     }
 
+    resizeStageBox();
     saveLocalSettings();
   }
 
   function updateStageSizeUI() {
     dom.stageSizeDisplay.textContent = `${state.stageWidth} × ${state.stageHeight}`;
-    dom.stageWrapper.style.aspectRatio = `${state.stageWidth} / ${state.stageHeight}`;
   }
 
   // 解析输入，获取作品 ID 或直链
@@ -336,12 +388,19 @@
       try {
         state.scaffolding.stopAll();
       } catch (e) {}
-      dom.stageContainer.innerHTML = '';
       state.scaffolding = null;
     }
+    // 移除容器中原有的 Scaffolding 节点，避免覆盖 placeholder 与 overlay
+    const oldRoots = dom.stageContainer.querySelectorAll('.sc-root');
+    oldRoots.forEach(el => el.remove());
 
     // 2. 隐藏初始占位，创建新 Scaffolding
-    dom.stagePlaceholder.style.display = 'none';
+    if (dom.stagePlaceholder) {
+      dom.stagePlaceholder.style.display = 'none';
+    }
+
+    // 确保容器尺寸与当前舞台比例匹配并以最大尺寸填充
+    resizeStageBox();
 
     const scaffolding = new Scaffolding.Scaffolding();
     state.scaffolding = scaffolding;
@@ -354,6 +413,9 @@
     // 3. 挂载到容器
     scaffolding.setup();
     scaffolding.appendTo(dom.stageContainer);
+
+    // 挂载后再重排一次，确保 WebGL 画布和图层完全同步最新像素
+    resizeStageBox();
 
     // 4. 配置小码王素材源
     const storage = scaffolding.storage;
@@ -655,6 +717,19 @@
       closeModal();
       showToast('代理配置已保存');
     });
+
+    // 8. 视口自适应与全屏监听
+    window.addEventListener('resize', resizeStageBox);
+    document.addEventListener('fullscreenchange', () => {
+      setTimeout(resizeStageBox, 60);
+    });
+
+    if (window.ResizeObserver && dom.stageSection) {
+      const resizeObserver = new ResizeObserver(() => {
+        resizeStageBox();
+      });
+      resizeObserver.observe(dom.stageSection);
+    }
   }
 
   // 页面加载自动检测 URL 查询参数 (?id=8EKQ666J&proxy=...)
@@ -684,6 +759,7 @@
   function init() {
     loadLocalSettings();
     bindEvents();
+    resizeStageBox();
     checkUrlQueryParams();
   }
 
