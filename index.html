@@ -12,97 +12,39 @@
 
   <!-- 顶部导航 -->
   <header class="header">
-    <a href="#" class="logo-area">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
+    <div class="header-left">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <div class="logo-title">Scaccelerator</div>
       </div>
-      <div class="logo-title">Scaccelerator</div>
-    </a>
-    <div class="header-badges">
       <span class="badge">TurboWarp Scaffolding</span>
-      <button class="control-btn" id="btn-open-settings" title="网络与代理设置">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    </div>
+
+    <div class="header-right">
+      <span class="proxy-indicator" id="proxy-indicator" title="当前代理通道">代理: 智能代理池</span>
+      <button class="control-btn" id="btn-open-settings" title="代理与网络设置">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="3"></circle>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
         </svg>
       </button>
       <a href="https://github.com/XRJprogram/scaccelerator" target="_blank" class="github-link" title="GitHub 仓库">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
         </svg>
       </a>
     </div>
   </header>
 
-  <!-- 主容器 -->
-  <main class="main-container">
+  <!-- 视口单屏主区域 (左侧舞台，右侧控制面板) -->
+  <main class="app-layout">
 
-    <!-- 输入控制区 -->
-    <section class="input-section">
-      <div class="input-row">
-        <div class="url-input-wrapper">
-          <svg class="url-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-          </svg>
-          <input 
-            type="text" 
-            id="input-url" 
-            class="url-input" 
-            placeholder="输入小码王作品网址 (例如 https://world.xiaomawang.com/community/main/compose/8EKQ666J) 或作品 ID..."
-            autocomplete="off"
-            spellcheck="false"
-          >
-        </div>
-        <button class="btn btn-primary" id="btn-load-url">加载运行</button>
-        <label class="btn btn-secondary" title="打开本地 Scratch (.sb3) 文件">
-          <input type="file" id="input-local-file" accept=".sb3,.sb2,.sb" style="display: none;">
-          本地文件
-        </label>
-      </div>
-
-      <!-- 运行选项 -->
-      <div class="options-bar">
-        <div class="toggles-group">
-          <div class="select-wrapper">
-            <span>帧率目标:</span>
-            <select id="select-fps" class="custom-select">
-              <option value="60" selected>60 FPS (推荐)</option>
-              <option value="30">30 FPS (原版)</option>
-              <option value="120">120 FPS (高刷)</option>
-              <option value="0">无限制</option>
-            </select>
-          </div>
-
-          <label class="toggle-label" title="在帧与帧之间计算移动插值，呈现平滑动画">
-            <input type="checkbox" id="toggle-interpolation" class="toggle-checkbox" checked>
-            <span>补间插值 (Interpolation)</span>
-          </label>
-
-          <label class="toggle-label" title="使用舞台高清分辨率渲染画笔 (Pen)">
-            <input type="checkbox" id="toggle-hqpen" class="toggle-checkbox" checked>
-            <span>高精度画笔 (HQ Pen)</span>
-          </label>
-
-          <label class="toggle-label" title="解除 Scratch 原版 300 个克隆体上限与边界封顶">
-            <input type="checkbox" id="toggle-removelimits" class="toggle-checkbox" checked>
-            <span>解除克隆与边界限制</span>
-          </label>
-
-          <label class="toggle-label" title="跳过屏幕刷新等待，提高循环执行效率">
-            <input type="checkbox" id="toggle-turbo" class="toggle-checkbox">
-            <span>Turbo 极速模式</span>
-          </label>
-        </div>
-      </div>
-    </section>
-
-    <!-- 播放器主体与右侧边栏 -->
-    <section class="player-section">
-
-      <!-- 舞台区 -->
+    <!-- 左侧：舞台核心展示区 -->
+    <section class="stage-section">
       <div class="stage-wrapper" id="stage-wrapper">
         <!-- 播放器工具条 -->
         <div class="stage-toolbar">
@@ -123,7 +65,8 @@
                 <rect x="14" y="5" width="4" height="14" rx="1" />
               </svg>
             </button>
-            <div class="fps-counter" id="fps-display">60 FPS</div>
+            <div class="status-tag" id="fps-display">60 FPS</div>
+            <div class="status-tag stage-size-tag" id="stage-size-display">480 × 360</div>
           </div>
           <div class="toolbar-right">
             <button class="control-btn" id="btn-fullscreen" title="全屏显示">
@@ -138,12 +81,12 @@
         <div class="stage-container" id="stage-container">
           <!-- 初始占位提示 -->
           <div class="stage-placeholder" id="stage-placeholder">
-            <svg class="placeholder-icon" viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="placeholder-icon" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
               <line x1="8" y1="21" x2="16" y2="21"></line>
               <line x1="12" y1="17" x2="12" y2="21"></line>
             </svg>
-            <div class="placeholder-text">输入小码王作品网址或拖入 .sb3 文件</div>
+            <div class="placeholder-text">在右侧输入小码王作品网址或拖入 .sb3 文件</div>
             <div class="placeholder-subtext">基于 TurboWarp 引擎 · 支持 60 帧平滑渲染与编译加速</div>
           </div>
 
@@ -155,52 +98,124 @@
           </div>
         </div>
       </div>
-
-      <!-- 右侧侧边栏 -->
-      <aside class="side-panel">
-
-        <!-- 作品信息卡片 -->
-        <div class="card" id="card-meta">
-          <div class="card-title">作品信息</div>
-          <div class="project-meta-box">
-            <img id="meta-cover" class="meta-cover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='60' viewBox='0 0 80 60'%3E%3Crect width='80' height='60' fill='%231a1d24'/%3E%3C/svg%3E" alt="Cover">
-            <div class="meta-info">
-              <div class="meta-project-title" id="meta-title">未加载作品</div>
-              <div class="meta-author" id="meta-author">-</div>
-            </div>
-          </div>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <div class="stat-label">运行引擎</div>
-              <div class="stat-value">TurboWarp</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">帧率目标</div>
-              <div class="stat-value" id="stat-fps">60 FPS</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">浏览量</div>
-              <div class="stat-value" id="stat-views">-</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">点赞数</div>
-              <div class="stat-value" id="stat-likes">-</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 导出与工具卡片 -->
-        <div class="card">
-          <div class="card-title">项目导出</div>
-          <div class="export-actions">
-            <button class="btn btn-secondary btn-full" id="btn-export-sb3" disabled>下载 .sb3 文件</button>
-            <button class="btn btn-secondary btn-full" id="btn-install-script">获取小码王油猴脚本</button>
-          </div>
-        </div>
-
-      </aside>
-
     </section>
+
+    <!-- 右侧：控制面板与选项 (包含输入、尺寸、性能参数) -->
+    <aside class="control-panel">
+
+      <!-- 作品加载卡片 -->
+      <div class="panel-card">
+        <div class="panel-card-title">作品载入</div>
+        <div class="input-stack">
+          <div class="url-input-wrapper">
+            <input 
+              type="text" 
+              id="input-url" 
+              class="url-input" 
+              placeholder="输入小码王链接或作品 ID..."
+              autocomplete="off"
+              spellcheck="false"
+            >
+          </div>
+          <div class="button-row">
+            <button class="btn btn-primary btn-flex" id="btn-load-url">加载运行</button>
+            <label class="btn btn-secondary" title="打开本地 Scratch (.sb3) 文件">
+              <input type="file" id="input-local-file" accept=".sb3,.sb2,.sb" style="display: none;">
+              本地文件
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 舞台尺寸设置卡片 (TurboWarp 特性) -->
+      <div class="panel-card">
+        <div class="panel-card-title">舞台尺寸</div>
+        <div class="option-row">
+          <label class="option-label" for="select-stage-size">分辨率预设:</label>
+          <select id="select-stage-size" class="custom-select panel-select">
+            <option value="480x360" selected>480 × 360 (4:3 默认)</option>
+            <option value="640x360">640 × 360 (16:9 宽屏)</option>
+            <option value="480x480">480 × 480 (1:1 方形)</option>
+            <option value="540x405">540 × 405 (4:3 高清)</option>
+            <option value="custom">自定义尺寸...</option>
+          </select>
+        </div>
+        <div class="custom-size-inputs" id="custom-size-inputs" style="display: none;">
+          <input type="number" id="input-stage-w" class="num-input" placeholder="宽" value="480" min="100" max="1920">
+          <span style="color: var(--text-muted);">×</span>
+          <input type="number" id="input-stage-h" class="num-input" placeholder="高" value="360" min="100" max="1080">
+          <button class="btn btn-secondary btn-sm" id="btn-apply-custom-size">应用</button>
+        </div>
+      </div>
+
+      <!-- TurboWarp 性能与调优选项 -->
+      <div class="panel-card">
+        <div class="panel-card-title">运行调优</div>
+        
+        <div class="option-row">
+          <span class="option-label">目标帧率:</span>
+          <select id="select-fps" class="custom-select panel-select">
+            <option value="60" selected>60 FPS (推荐)</option>
+            <option value="30">30 FPS (原版)</option>
+            <option value="120">120 FPS (高刷)</option>
+            <option value="0">无限制 (最高)</option>
+          </select>
+        </div>
+
+        <div class="toggles-list">
+          <label class="toggle-item" title="在帧与帧之间计算移动插值，呈现平滑动画">
+            <input type="checkbox" id="toggle-interpolation" class="toggle-checkbox" checked>
+            <span>补间插值 (Interpolation)</span>
+          </label>
+
+          <label class="toggle-item" title="使用舞台高清分辨率渲染画笔 (Pen)">
+            <input type="checkbox" id="toggle-hqpen" class="toggle-checkbox" checked>
+            <span>高精度画笔 (HQ Pen)</span>
+          </label>
+
+          <label class="toggle-item" title="解除 Scratch 原版 300 个克隆体上限与边界封顶">
+            <input type="checkbox" id="toggle-removelimits" class="toggle-checkbox" checked>
+            <span>解除克隆与边界限制</span>
+          </label>
+
+          <label class="toggle-item" title="跳过屏幕刷新等待，提高循环执行效率">
+            <input type="checkbox" id="toggle-turbo" class="toggle-checkbox">
+            <span>Turbo 极速模式</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- 作品信息 -->
+      <div class="panel-card" id="card-meta">
+        <div class="panel-card-title">作品信息</div>
+        <div class="project-meta-box">
+          <img id="meta-cover" class="meta-cover" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='48' viewBox='0 0 64 48'%3E%3Crect width='64' height='48' fill='%23161b22'/%3E%3C/svg%3E" alt="Cover">
+          <div class="meta-info">
+            <div class="meta-project-title" id="meta-title">未加载作品</div>
+            <div class="meta-author" id="meta-author">-</div>
+          </div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">运行引擎</div>
+            <div class="stat-value">TurboWarp</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">当前帧率</div>
+            <div class="stat-value" id="stat-fps">60 FPS</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">浏览量</div>
+            <div class="stat-value" id="stat-views">-</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">点赞数</div>
+            <div class="stat-value" id="stat-likes">-</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
 
   </main>
 
@@ -208,25 +223,28 @@
   <div class="modal-backdrop" id="modal-settings">
     <div class="modal-card">
       <div class="modal-header">
-        <div class="card-title">网络与代理设置</div>
+        <div class="panel-card-title" style="margin:0;">网络与代理设置</div>
         <button class="modal-close" id="btn-close-settings">&times;</button>
       </div>
       <p class="modal-desc">
-        静态站点受浏览器同源策略限制，需通过代理通道拉取小码王服务器数据。
+        小码王服务器限制了外部直接跨域拉取，默认优先建议配置专属 Cloudflare Worker 代理（稳定且不报 403 错误）。
       </p>
 
       <div class="form-group">
         <label class="form-label">通道模式：</label>
         <select id="select-proxy-mode" class="custom-select form-select">
-          <option value="auto">智能代理池 (自动重试)</option>
-          <option value="custom">自定义 Cloudflare Worker (推荐)</option>
-          <option value="direct">直连模式 (搭配油猴脚本)</option>
+          <option value="custom" selected>Cloudflare Worker 代理 (推荐)</option>
+          <option value="auto">公共代理池 (部分节点受小码王限制可能报403)</option>
+          <option value="direct">直连模式 (仅配合油猴脚本使用)</option>
         </select>
       </div>
 
-      <div id="custom-proxy-row" class="form-group" style="display: none;">
+      <div id="custom-proxy-row" class="form-group">
         <label class="form-label">Worker 代理地址：</label>
         <input type="text" id="input-custom-proxy" class="url-input" placeholder="https://your-worker.workers.dev/?url=">
+        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
+          在 Cloudflare Workers 新建 Worker 并粘贴仓库里的 worker.js 即可免费获得。
+        </span>
       </div>
 
       <div class="modal-footer">
@@ -238,11 +256,6 @@
 
   <!-- Toast 提示容器 -->
   <div class="toast-container" id="toast-container"></div>
-
-  <!-- 页脚 -->
-  <footer class="footer">
-    Scaccelerator · 基于 TurboWarp Scaffolding 构建 · 供编程学习与性能测试使用
-  </footer>
 
   <!-- 依赖库 -->
   <script src="lib/crypto-js.min.js"></script>

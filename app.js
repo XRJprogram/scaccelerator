@@ -1,6 +1,6 @@
 /**
  * Scaccelerator - 核心逻辑控制器
- * 负责小码王链接解析、CORS 代理故障转移、AES-128-CBC 解密及 TurboWarp Scaffolding 引擎驱动
+ * 负责小码王链接解析、CORS 代理请求、AES-128-CBC 解密、自定义舞台尺寸及 TurboWarp Scaffolding 运行
  */
 
 (function () {
@@ -10,31 +10,25 @@
   const AES_KEY = CryptoJS.enc.Utf8.parse("xmwcommunityskey");
   const AES_IV = CryptoJS.enc.Utf8.parse("0392139263920300");
 
-  // 公共 CORS 代理池 (按稳定性排序)
+  // 公共 CORS 代理池 (作为备选，小码王防盗链较严，建议优先自建 Worker)
   const PUBLIC_PROXIES = [
     (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
     (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
     (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
   ];
 
-  // 全局状态
+  // 全局内部状态 (闭包隔离，杜绝外部泄露与导出)
   const state = {
     scaffolding: null,
-    currentProjectData: null,
-    currentMeta: {
-      title: '未加载作品',
-      author: '小码王社区',
-      cover: '',
-      views: '-',
-      likes: '-'
-    },
+    stageWidth: 480,
+    stageHeight: 360,
     settings: {
       fps: 60,
       interpolation: true,
       hqPen: true,
       removeLimits: true,
       turbo: false,
-      proxyMode: 'auto', // 'auto' | 'custom' | 'direct'
+      proxyMode: 'custom', // 优先推荐自定义 worker
       customProxyUrl: ''
     },
     isPaused: false
@@ -45,6 +39,11 @@
     inputUrl: document.getElementById('input-url'),
     btnLoadUrl: document.getElementById('btn-load-url'),
     inputLocalFile: document.getElementById('input-local-file'),
+    selectStageSize: document.getElementById('select-stage-size'),
+    customSizeInputs: document.getElementById('custom-size-inputs'),
+    inputStageW: document.getElementById('input-stage-w'),
+    inputStageH: document.getElementById('input-stage-h'),
+    btnApplyCustomSize: document.getElementById('btn-apply-custom-size'),
     selectFps: document.getElementById('select-fps'),
     toggleInterpolation: document.getElementById('toggle-interpolation'),
     toggleHqpen: document.getElementById('toggle-hqpen'),
@@ -61,14 +60,14 @@
     btnPause: document.getElementById('btn-pause'),
     btnFullscreen: document.getElementById('btn-fullscreen'),
     fpsDisplay: document.getElementById('fps-display'),
+    stageSizeDisplay: document.getElementById('stage-size-display'),
+    proxyIndicator: document.getElementById('proxy-indicator'),
     metaCover: document.getElementById('meta-cover'),
     metaTitle: document.getElementById('meta-title'),
     metaAuthor: document.getElementById('meta-author'),
     statFps: document.getElementById('stat-fps'),
     statViews: document.getElementById('stat-views'),
     statLikes: document.getElementById('stat-likes'),
-    btnExportSb3: document.getElementById('btn-export-sb3'),
-    btnInstallScript: document.getElementById('btn-install-script'),
     modalSettings: document.getElementById('modal-settings'),
     btnOpenSettings: document.getElementById('btn-open-settings'),
     btnCloseSettings: document.getElementById('btn-close-settings'),
@@ -111,6 +110,18 @@
       if (saved) {
         Object.assign(state.settings, JSON.parse(saved));
       }
+      const savedSize = localStorage.getItem('scaccelerator_stage_size');
+      if (savedSize) {
+        const { w, h, mode } = JSON.parse(savedSize);
+        state.stageWidth = w || 480;
+        state.stageHeight = h || 360;
+        dom.selectStageSize.value = mode || '480x360';
+        if (mode === 'custom') {
+          dom.customSizeInputs.style.display = 'flex';
+          dom.inputStageW.value = state.stageWidth;
+          dom.inputStageH.value = state.stageHeight;
+        }
+      }
     } catch (e) {
       console.warn('读取本地配置失败:', e);
     }
@@ -124,16 +135,59 @@
     dom.selectProxyMode.value = state.settings.proxyMode;
     dom.inputCustomProxy.value = state.settings.customProxyUrl;
     dom.customProxyRow.style.display = state.settings.proxyMode === 'custom' ? 'flex' : 'none';
-    dom.statFps.textContent = state.settings.fps === 0 ? '无限制' : `${state.settings.fps} FPS`;
-    dom.fpsDisplay.textContent = state.settings.fps === 0 ? 'MAX FPS' : `${state.settings.fps} FPS`;
+    
+    updateProxyIndicator();
+    updateStageSizeUI();
   }
 
   function saveLocalSettings() {
     try {
       localStorage.setItem('scaccelerator_settings', JSON.stringify(state.settings));
+      localStorage.setItem('scaccelerator_stage_size', JSON.stringify({
+        w: state.stageWidth,
+        h: state.stageHeight,
+        mode: dom.selectStageSize.value
+      }));
     } catch (e) {
       console.warn('保存配置失败:', e);
     }
+  }
+
+  function updateProxyIndicator() {
+    if (state.settings.proxyMode === 'custom') {
+      dom.proxyIndicator.textContent = state.settings.customProxyUrl ? '代理: Cloudflare Worker' : '代理: 未填 Worker 地址';
+      dom.proxyIndicator.style.color = state.settings.customProxyUrl ? 'var(--accent-green)' : 'var(--accent-red)';
+    } else if (state.settings.proxyMode === 'auto') {
+      dom.proxyIndicator.textContent = '代理: 公共代理池';
+      dom.proxyIndicator.style.color = 'var(--text-secondary)';
+    } else {
+      dom.proxyIndicator.textContent = '代理: 直连模式';
+      dom.proxyIndicator.style.color = 'var(--text-muted)';
+    }
+  }
+
+  // 舞台分辨率更新
+  function setStageDimensions(width, height) {
+    state.stageWidth = parseInt(width, 10) || 480;
+    state.stageHeight = parseInt(height, 10) || 360;
+
+    updateStageSizeUI();
+
+    // 如果播放器已存在，动态更新尺寸与重排
+    if (state.scaffolding) {
+      state.scaffolding.width = state.stageWidth;
+      state.scaffolding.height = state.stageHeight;
+      if (typeof state.scaffolding.relayout === 'function') {
+        state.scaffolding.relayout();
+      }
+    }
+
+    saveLocalSettings();
+  }
+
+  function updateStageSizeUI() {
+    dom.stageSizeDisplay.textContent = `${state.stageWidth} × ${state.stageHeight}`;
+    dom.stageWrapper.style.aspectRatio = `${state.stageWidth} / ${state.stageHeight}`;
   }
 
   // 解析输入，获取作品 ID 或直链
@@ -173,35 +227,36 @@
       return isBinary ? await res.arrayBuffer() : await res.text();
     }
 
-    // 2. 自定义 Worker 模式
-    if (mode === 'custom' && state.settings.customProxyUrl) {
-      const customPrefix = state.settings.customProxyUrl;
+    // 2. 自定义 Cloudflare Worker 模式 (首选推荐)
+    if (mode === 'custom') {
+      let customPrefix = state.settings.customProxyUrl.trim();
+      if (!customPrefix) {
+        throw new Error('未配置 Cloudflare Worker 代理地址，请点击右上角设置图标填写');
+      }
       const proxyUrl = customPrefix.includes('?') 
         ? `${customPrefix}${encodeURIComponent(targetUrl)}` 
         : `${customPrefix}?url=${encodeURIComponent(targetUrl)}`;
       const res = await fetch(proxyUrl);
-      if (!res.ok) throw new Error(`自定义 Worker 请求失败: HTTP ${res.status}`);
+      if (!res.ok) throw new Error(`Worker 代理请求失败: HTTP ${res.status}`);
       return isBinary ? await res.arrayBuffer() : await res.text();
     }
 
-    // 3. 智能公共代理池轮询模式
+    // 3. 公共代理池轮询模式
     let lastError = null;
     for (let i = 0; i < PUBLIC_PROXIES.length; i++) {
       const proxyFn = PUBLIC_PROXIES[i];
       const proxyUrl = proxyFn(targetUrl);
       try {
-        console.log(`[Scaccelerator] 尝试代理通道 ${i + 1}: ${proxyUrl}`);
         const res = await fetch(proxyUrl);
         if (res.ok) {
           return isBinary ? await res.arrayBuffer() : await res.text();
         }
       } catch (err) {
-        console.warn(`[Scaccelerator] 代理通道 ${i + 1} 失败:`, err);
         lastError = err;
       }
     }
 
-    throw new Error(lastError ? `所有代理节点均不可用: ${lastError.message}` : '请求失败');
+    throw new Error(lastError ? `公共代理节点不可用: ${lastError.message}` : '请求失败');
   }
 
   // 小码王 AES 加密数据解密器
@@ -272,7 +327,7 @@
     return null;
   }
 
-  // 核心：加载并启动项目
+  // 核心：加载并启动项目 (严格闭包隔离，不向外界暴露原始代码)
   async function loadAndRunProject(projectData, meta = {}) {
     showOverlay('正在初始化 TurboWarp 虚拟机...', '启动 JS 编译加速引擎');
 
@@ -291,8 +346,8 @@
     const scaffolding = new Scaffolding.Scaffolding();
     state.scaffolding = scaffolding;
 
-    scaffolding.width = 480;
-    scaffolding.height = 360;
+    scaffolding.width = state.stageWidth;
+    scaffolding.height = state.stageHeight;
     scaffolding.resizeMode = 'preserve-ratio';
     scaffolding.editableLists = false;
 
@@ -300,7 +355,7 @@
     scaffolding.setup();
     scaffolding.appendTo(dom.stageContainer);
 
-    // 4. 配置小码王素材源 (应对解压单 JSON 项目模式)
+    // 4. 配置小码王素材源
     const storage = scaffolding.storage;
     storage.addWebStore(
       [storage.AssetType.ImageVector, storage.AssetType.ImageBitmap],
@@ -314,17 +369,13 @@
     // 5. 应用 TurboWarp 高性能参数
     applyTurboWarpOptions(scaffolding);
 
-    showOverlay('正在载入项目资源...', '解压角色、声音与造型素材');
+    showOverlay('正在载入项目资源...', '解析角色、声音与造型素材');
 
     // 6. 载入项目二进制数据
     await scaffolding.loadProject(projectData);
-    state.currentProjectData = projectData;
 
     // 7. 更新右侧元数据信息
     updateProjectMetaUI(meta);
-
-    // 启用导出按钮
-    dom.btnExportSb3.disabled = false;
 
     hideOverlay();
     showToast('项目已成功加载并启动');
@@ -368,7 +419,7 @@
     dom.btnLoadUrl.disabled = true;
 
     try {
-      // 1. 并发请求作品详情与作品包
+      // 1. 请求作品包
       const apiUrl = `https://community-api.xiaomawang.com/japi/v1/composition/get-encrypt-sb3?compositionEncryptId=${id}`;
       
       const [apiResponseText, meta] = await Promise.all([
@@ -414,7 +465,7 @@
       console.error(err);
       hideOverlay();
       showToast(`加载失败: ${err.message}`, 5000);
-      alert(`加载失败: ${err.message}\n\n提示：如遇 CORS 限制，请点击右上角设置图标更换为自定义 Cloudflare Worker 代理，或使用油猴脚本。`);
+      alert(`加载失败: ${err.message}\n\n提示：小码王限制了公共海外代理访问 (易报 403)。建议在右上角设置中填写个人免费 Cloudflare Worker 代理地址。`);
     } finally {
       dom.btnLoadUrl.disabled = false;
     }
@@ -487,7 +538,31 @@
       }
     });
 
-    // 4. 播放控制条事件
+    // 4. 舞台尺寸设置切换
+    dom.selectStageSize.addEventListener('change', () => {
+      const val = dom.selectStageSize.value;
+      if (val === 'custom') {
+        dom.customSizeInputs.style.display = 'flex';
+      } else {
+        dom.customSizeInputs.style.display = 'none';
+        const [w, h] = val.split('x').map(Number);
+        setStageDimensions(w, h);
+        showToast(`舞台尺寸已调整为 ${w} × ${h}`);
+      }
+    });
+
+    dom.btnApplyCustomSize.addEventListener('click', () => {
+      const w = parseInt(dom.inputStageW.value, 10);
+      const h = parseInt(dom.inputStageH.value, 10);
+      if (w >= 100 && h >= 100) {
+        setStageDimensions(w, h);
+        showToast(`自定义舞台尺寸已生效: ${w} × ${h}`);
+      } else {
+        showToast('宽高必须大于等于 100');
+      }
+    });
+
+    // 5. 播放控制条事件
     dom.btnGreenFlag.addEventListener('click', () => {
       if (state.scaffolding) {
         state.scaffolding.greenFlag();
@@ -526,7 +601,7 @@
       }
     });
 
-    // 5. 性能选项调整事件
+    // 6. 性能选项调整事件
     dom.selectFps.addEventListener('change', () => {
       state.settings.fps = parseInt(dom.selectFps.value, 10);
       saveLocalSettings();
@@ -559,29 +634,7 @@
       showToast(state.settings.turbo ? 'Turbo 极速模式已开启' : 'Turbo 模式已关闭');
     });
 
-    // 6. 导出已解密 .sb3
-    dom.btnExportSb3.addEventListener('click', async () => {
-      if (!state.scaffolding || !state.scaffolding.vm) return;
-      try {
-        showToast('正在导出项目 .sb3...');
-        const blob = await state.scaffolding.vm.saveProjectSb3();
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        const fileName = `${dom.metaTitle.textContent || 'project'}.sb3`;
-        a.download = fileName;
-        a.click();
-        showToast('导出完成，已开始下载');
-      } catch (err) {
-        showToast(`导出失败: ${err.message}`);
-      }
-    });
-
-    // 7. 安装油猴脚本
-    dom.btnInstallScript.addEventListener('click', () => {
-      window.open('scaccelerator.user.js', '_blank');
-    });
-
-    // 8. 代理设置模态框
+    // 7. 代理设置模态框
     dom.btnOpenSettings.addEventListener('click', () => {
       dom.modalSettings.classList.add('active');
     });
@@ -598,16 +651,25 @@
       state.settings.proxyMode = dom.selectProxyMode.value;
       state.settings.customProxyUrl = dom.inputCustomProxy.value.trim();
       saveLocalSettings();
+      updateProxyIndicator();
       closeModal();
       showToast('代理配置已保存');
     });
   }
 
-  // 页面加载自动检测 URL 查询参数 (?id=8EKQ666J)
+  // 页面加载自动检测 URL 查询参数 (?id=8EKQ666J&proxy=...)
   function checkUrlQueryParams() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get('id');
     const url = params.get('url');
+    const proxy = params.get('proxy');
+
+    if (proxy) {
+      state.settings.proxyMode = 'custom';
+      state.settings.customProxyUrl = proxy;
+      saveLocalSettings();
+      updateProxyIndicator();
+    }
 
     if (id) {
       dom.inputUrl.value = id;

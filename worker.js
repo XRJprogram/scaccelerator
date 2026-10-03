@@ -55,7 +55,7 @@ export default {
 
       // 附加 CORS 响应头
       const responseHeaders = new Headers(response.headers);
-      responseHeaders.set("Access-Control-Allow-Origin": "*",);
+      responseHeaders.set("Access-Control-Allow-Origin", "*");
       responseHeaders.set("Access-Control-Allow-Methods", "GET, HEAD, POST, OPTIONS");
       responseHeaders.set("Access-Control-Allow-Headers", "*");
       responseHeaders.set("Access-Control-Expose-Headers", "*");
