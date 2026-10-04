@@ -25,13 +25,6 @@
     </div>
 
     <div class="header-right">
-      <span class="proxy-indicator" id="proxy-indicator" title="当前代理通道">代理: 智能代理池</span>
-      <button class="control-btn" id="btn-open-settings" title="代理与网络设置">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"></circle>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-        </svg>
-      </button>
       <a href="https://github.com/XRJprogram/scaccelerator" target="_blank" class="github-link" title="GitHub 仓库">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
@@ -127,24 +120,22 @@
         </div>
       </div>
 
-      <!-- 舞台尺寸设置卡片 (TurboWarp 特性) -->
+      <!-- 舞台尺寸设置卡片 -->
       <div class="panel-card">
-        <div class="panel-card-title">舞台尺寸</div>
-        <div class="option-row">
-          <label class="option-label" for="select-stage-size">分辨率预设:</label>
-          <select id="select-stage-size" class="custom-select panel-select">
-            <option value="480x360" selected>480 × 360 (4:3 默认)</option>
-            <option value="640x360">640 × 360 (16:9 宽屏)</option>
-            <option value="480x480">480 × 480 (1:1 方形)</option>
-            <option value="540x405">540 × 405 (4:3 高清)</option>
-            <option value="custom">自定义尺寸...</option>
-          </select>
+        <div class="panel-header-row">
+          <div class="panel-card-title">舞台尺寸</div>
+          <button class="btn-text-action" id="btn-reset-stage-size" title="恢复默认 480 × 360">恢复默认</button>
         </div>
-        <div class="custom-size-inputs" id="custom-size-inputs" style="display: none;">
-          <input type="number" id="input-stage-w" class="num-input" placeholder="宽" value="480" min="100" max="1920">
-          <span style="color: var(--text-muted);">×</span>
-          <input type="number" id="input-stage-h" class="num-input" placeholder="高" value="360" min="100" max="1080">
+        <div class="stage-size-row">
+          <div class="size-input-group">
+            <input type="number" id="input-stage-w" class="num-input" placeholder="宽" value="480" min="100" max="3840" step="10">
+            <span class="size-cross">×</span>
+            <input type="number" id="input-stage-h" class="num-input" placeholder="高" value="360" min="100" max="2160" step="10">
+          </div>
           <button class="btn btn-secondary btn-sm" id="btn-apply-custom-size">应用</button>
+        </div>
+        <div class="stage-size-hint">
+          默认原生 480×360。修改分辨率会改变坐标空间，非宽屏作品克隆体或边缘判定可能错位。
         </div>
       </div>
 
@@ -173,14 +164,19 @@
             <span>高精度画笔 (HQ Pen)</span>
           </label>
 
-          <label class="toggle-item" title="解除 Scratch 原版 300 个克隆体上限与边界封顶">
-            <input type="checkbox" id="toggle-removelimits" class="toggle-checkbox" checked>
-            <span>解除克隆与边界限制</span>
+          <label class="toggle-item" title="解除 Scratch 原版 300 个克隆体上限">
+            <input type="checkbox" id="toggle-infinite-clones" class="toggle-checkbox" checked>
+            <span>无克隆体上限 (Infinite Clones)</span>
+          </label>
+
+          <label class="toggle-item" title="允许角色/克隆体完全飞出舞台边缘 (非特殊需求请勿开启，易导致克隆体边缘错位)">
+            <input type="checkbox" id="toggle-remove-fencing" class="toggle-checkbox">
+            <span>解除边缘限制 (Remove Fencing)</span>
           </label>
 
           <label class="toggle-item" title="跳过屏幕刷新等待，提高循环执行效率">
             <input type="checkbox" id="toggle-turbo" class="toggle-checkbox">
-            <span>Turbo 极速模式</span>
+            <span>加速模式</span>
           </label>
         </div>
       </div>
@@ -218,41 +214,6 @@
     </aside>
 
   </main>
-
-  <!-- 网络与代理配置模态框 -->
-  <div class="modal-backdrop" id="modal-settings">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="panel-card-title" style="margin:0;">网络与代理设置</div>
-        <button class="modal-close" id="btn-close-settings">&times;</button>
-      </div>
-      <p class="modal-desc">
-        小码王服务器限制了外部直接跨域拉取，默认优先建议配置专属 Cloudflare Worker 代理（稳定且不报 403 错误）。
-      </p>
-
-      <div class="form-group">
-        <label class="form-label">通道模式：</label>
-        <select id="select-proxy-mode" class="custom-select form-select">
-          <option value="custom" selected>Cloudflare Worker 代理 (推荐)</option>
-          <option value="auto">公共代理池 (部分节点受小码王限制可能报403)</option>
-          <option value="direct">直连模式 (仅配合油猴脚本使用)</option>
-        </select>
-      </div>
-
-      <div id="custom-proxy-row" class="form-group">
-        <label class="form-label">Worker 代理地址：</label>
-        <input type="text" id="input-custom-proxy" class="url-input" placeholder="https://your-worker.workers.dev/?url=">
-        <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">
-          在 Cloudflare Workers 新建 Worker 并粘贴仓库里的 worker.js 即可免费获得。
-        </span>
-      </div>
-
-      <div class="modal-footer">
-        <button class="btn btn-secondary" id="btn-cancel-settings">取消</button>
-        <button class="btn btn-primary" id="btn-save-settings">保存配置</button>
-      </div>
-    </div>
-  </div>
 
   <!-- Toast 提示容器 -->
   <div class="toast-container" id="toast-container"></div>

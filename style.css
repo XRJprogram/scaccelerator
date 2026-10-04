@@ -383,6 +383,35 @@ body {
   letter-spacing: 0.04em;
 }
 
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-text-action {
+  background: none;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.btn-text-action:hover {
+  color: var(--accent-primary-hover);
+}
+
+.stage-size-hint {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
 /* 输入与按钮组 */
 .input-stack {
   display: flex;
@@ -502,27 +531,45 @@ body {
   width: 170px;
 }
 
-/* 自定义尺寸输入框 */
-.custom-size-inputs {
+/* 舞台尺寸单行自定义 */
+.stage-size-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.size-input-group {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding-top: 4px;
+  flex: 1;
 }
 
-.num-input {
-  width: 70px;
+.size-input-group .num-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
   background: var(--bg-input);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
-  padding: 4px 6px;
+  padding: 5px 8px;
   color: var(--text-main);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  text-align: center;
   outline: none;
+  transition: border-color var(--transition-fast);
 }
 
-.num-input:focus {
+.size-input-group .num-input:focus {
   border-color: var(--border-focus);
+}
+
+.size-cross {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  user-select: none;
 }
 
 /* 开关选项列表 */

@@ -37,26 +37,17 @@ https://xrjprogram.github.io/scaccelerator/?id=<作品ID>
 
 ---
 
-## 跨域与 Cloudflare Worker 代理配置教程 (必看)
+## 跨域与代理说明 (开箱即用)
 
-由于国内小码王服务器（网宿 CDN）对外部跨域请求有较严格的防盗链与 IP 限制，公共海外代理容易报 403 错误。**强烈建议花 2 分钟配置专属 Cloudflare Worker 代理（完全免费，每天 10 万次请求）：**
+本项目已**默认配置官方高可用代理节点**（`https://scaccelerator.xrjprogram.workers.dev/?url=`），所有人打开即可直接跨域解析运行小码王作品，无需额外设置。
 
-### 步骤一：创建 Worker
-1. 打开并登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)。
-2. 在左侧菜单点击 **Workers & Pages** -> **Overview** -> **Create Application**。
-3. 点击 **Create Worker**，输入名称（例如 `sc-proxy`），点击右下角 **Deploy**。
+如果遇到网络波动或需要部署自己的独立代理通道（每天免费 10 万次请求），可按以下 2 分钟教程搭建专属 Worker：
 
-### 步骤二：粘贴代理代码
-1. 部署完成后，点击 **Edit Code** 进入代码编辑器。
-2. 将本项目根目录下的 [`worker.js`](worker.js) 文件全部内容复制，替换编辑器里的全部代码。
-3. 点击右上角 **Deploy** 部署。
-
-### 步骤三：在 Scaccelerator 中填入 Worker 地址
-1. 复制 Worker 页面提供的访问域名（例如 `https://sc-proxy.yourname.workers.dev`）。
-2. 打开 Scaccelerator 网页，点击右上角设置图标。
-3. 确保通道模式为 **Cloudflare Worker 代理**，并将地址填为：
-   `https://sc-proxy.yourname.workers.dev/?url=`
-4. 点击保存配置。后续所有小码王作品即可秒速跨域解密加载，彻底告别 403 节点不可用问题！
+### 可选：自建专属 Cloudflare Worker 代理
+1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com/)，进入 **Workers & Pages** -> **Create Application**。
+2. 点击 **Create Worker**，输入名称并点击 **Deploy**。
+3. 点击 **Edit Code**，将本项目根目录下的 [`worker.js`](worker.js) 内容复制并覆盖粘贴进去，点击 **Deploy**。
+4. 打开 Scaccelerator 网页右上角设置，将通道地址填入你的 Worker 域名即可。
 
 ---
 

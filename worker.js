@@ -20,7 +20,7 @@ export default {
     }
 
     // 获取目标 URL: 通过 ?url= 参数或者直接转发
-    const targetUrl = url.searchParams.get("url");
+    let targetUrl = url.searchParams.get("url");
     if (!targetUrl) {
       // 若在浏览器中直接打开 Worker 地址，自动跳转到 GitHub Pages 前端播放器
       const acceptHeader = request.headers.get("Accept") || "";
@@ -45,14 +45,28 @@ export default {
     }
 
     try {
-      // 构造请求，伪装小码王官方 Referer 和常见请求头以穿透防盗链
-      const modifiedHeaders = new Headers(request.headers);
+      // 自动规范化小码王 URL 并穿透 CDN 防盗链：
+      // 1. 消除双斜杠 (如 //composition/)
+      // 2. 将 .sb3/.sb2 转义为 %2Esb3/%2Esb2，绕过网宿 CDN 针对扩展名的 403 拦截规则
+      targetUrl = targetUrl
+        .replace(/([^:])\/\/+/g, "$1/")
+        .replace(/\.sb3(?=$|[?#])/i, "%2Esb3")
+        .replace(/\.sb2(?=$|[?#])/i, "%2Esb2");
+
+      // 构造请求，伪装小码王官方 Referer 和纯净请求头以穿透防盗链
+      const modifiedHeaders = new Headers();
       modifiedHeaders.set("Referer", "https://world.xiaomawang.com/");
       modifiedHeaders.set("Origin", "https://world.xiaomawang.com");
       modifiedHeaders.set(
         "User-Agent",
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       );
+      if (request.headers.has("Accept")) {
+        modifiedHeaders.set("Accept", request.headers.get("Accept"));
+      }
+      if (request.headers.has("Range")) {
+        modifiedHeaders.set("Range", request.headers.get("Range"));
+      }
 
       const response = await fetch(targetUrl, {
         method: request.method,
